@@ -1,0 +1,54 @@
+---
+- name: Bless Bastion Config| make .ssh directory
+  file:
+    path: "{{ ssh_path }}"
+    state: directory
+    group: root
+    owner: root
+    mode: 0700
+
+- name: make .blessclient directory
+  file:
+    path: "{{ bless_client_path }}"
+    state: directory
+    group: root
+    owner: root
+    mode: 0700
+
+- name:  Bless Bastion Config | ensure empty authorized_keys file
+  copy:
+    content: ""
+    dest: "{{ ssh_path }}/authorized_keys"
+    force: no
+    group: root
+    owner: root
+    mode: 0600
+
+- name: Download and Untar Bless Client
+  unarchive:
+    src: "https://github.com/chanzuckerberg/blessclient/releases/download/v{{ bless_client_version }}/blessclient_v{{ bless_client_version }}_linux_amd64.tar.gz"
+    dest: "{{ bless_client_path }}"
+    remote_src: yes
+
+- name:  Bless Bastion Config | create temporary ssh key
+  command: ssh-keygen -t rsa -b 4096 -f {{ ssh_path }}/{{ bless_key }} -N '' -C ''
+  args:
+    creates: "{{ ssh_path }}/{{ bless_key }}"#
+
+- name: Bless Bastion Config | create ssh config file
+  copy:
+    src: ssh_config
+    dest: "{{ ssh_path }}/config"
+    force: no
+    group: root
+    owner: root
+    mode: 0600
+
+- name: Bless Bastion Config | copy bless client config
+  copy:
+    src: bless_client_config
+    dest: "{{ bless_client_path }}/config.yml"
+    force: no
+    group: root
+    owner: root
+    mode: 0600

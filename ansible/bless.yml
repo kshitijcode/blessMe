@@ -1,0 +1,17 @@
+---
+- hosts: "{{ target_hosts }}"
+  become: true
+  gather_facts: false
+
+  pre_tasks:
+
+    - name: Gather facts
+      setup:
+
+    - name: Gather ec2 facts
+      ec2_facts:
+
+  roles:
+    - { role: skel, tags: ['bastion'] }
+    - { role: iamsync, tags: ['bastion'] }
+    - { role: bless-ca, tags: ['hosts'] }

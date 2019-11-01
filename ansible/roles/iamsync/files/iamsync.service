@@ -1,0 +1,13 @@
+[Unit]
+Description=Sync iam users with bastion
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+Restart=always
+WorkingDirectory=/opt/iamsync
+ExecStart=/usr/bin/python3 iamsync.py

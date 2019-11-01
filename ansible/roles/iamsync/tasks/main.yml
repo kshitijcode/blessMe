@@ -1,0 +1,73 @@
+- name: Ensure latest version of pip
+  apt:
+    pkg: python3-pip
+    state: latest
+    update_cache: yes
+
+- name: Ensure iamsync dependencies are present
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - docopt
+    - boto3
+
+- name: iamsync opt directory
+  file:
+    path: /opt/iamsync
+    state: directory
+    mode: 0600
+
+- name: copy iamsync.py to disk
+  template:
+    src: iamsync.j2
+    dest: /opt/iamsync/iamsync.py
+    owner: root
+    group: root
+    mode: 0500
+
+- name: copy iamsync service
+  copy:
+    src: iamsync.service
+    dest: /opt/iamsync/iamsync.service
+    owner: root
+    group: root
+    mode: 0600
+
+- name: copy iamsync timer
+  copy:
+    src: iamsync.timer
+    dest: /opt/iamsync/iamsync.timer
+    owner: root
+    group: root
+    mode: 0600
+
+- name: enable iamsync service
+  command: systemctl enable /opt/iamsync/iamsync.service
+  args:
+    creates: /etc/systemd/system/iamsync.service
+
+- name: enable iamsync timer
+  command: systemctl enable /opt/iamsync/iamsync.timer
+  args:
+    creates: /etc/systemd/system/iamsync.timer
+  register: timer
+
+- name: start iamsync cron job
+  command: systemctl start iamsync.timer
+  when: timer.changed
+
+- name: Implement logrotate for iamsync.log
+  template:
+    src: iamsync-logrotate.j2
+    dest: /etc/logrotate.d/iamsync
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Allow specified groups to sudo
+  template:
+    src: sudoers.j2
+    dest: /etc/sudoers.d/sudoers
+    validate: 'visudo -cf %s'
+    mode: 0440

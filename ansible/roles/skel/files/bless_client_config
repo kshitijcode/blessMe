@@ -1,0 +1,32 @@
+version: 0 # blessclient config version
+client_config:
+  # The aws user (not role) profile to use. "" means "default"
+  aws_user_profile: ""
+  aws_username: "kshitijsharma"
+  # The lifetime for your certificate
+  cert_lifetime: 1440m
+  # A default ssh key. We prefer ed25519 keys but you can also use RSA keys.
+  # (see https://github.com/chanzuckerberg/blessclient#ssh-client-78-cant-connect-with-certificates)
+  # You can generate an ed25519 key with ssh-keygen -t ed25519
+  ssh_private_key: ~/.ssh/blessid
+  # Do you want blessclient to attempt to update your ssh agent
+  # Remote users that bless will mint into your certificate
+  remote_users:
+    - ubuntu
+    - centos
+  bastion_ips:
+    - 0.0.0.0/0
+  # These IPs and/or netmasks will be added as valid source IPs to every
+  # certificate issued. If your users proxy / agent-forward through a bastion host, then
+  # the internal IP of each should be listed here.
+# configuration for the bless lambda
+lambda_config:
+  # the role authorized to invoke bless lambda
+  # the name of the bless lambda function
+  function_name: BLESS
+  # For multi-region availability or geographic colocation.
+  # Regions will be attempted in the order specified.
+  regions:
+  - aws_region: ap-south-1
+    # The kmsauth key_id (not arn) of the key to use for authentication for this region
+    kms_auth_key_id: e8689629-e558-4a9e-a192-b128684eb052

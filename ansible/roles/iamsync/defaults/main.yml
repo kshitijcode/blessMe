@@ -1,0 +1,9 @@
+# These groups must match the names of IAM groups and exist at the iam_pathprefix
+# path within IAM if you are doing ListAllGroups within that prefixpath
+iam_groups:
+  - name: ssh-bless-experiment
+    groupid: 3000
+    sudo: true
+
+iam_pathprefix: "/"
+iamsync_logpath: /var/log/iamsync.log

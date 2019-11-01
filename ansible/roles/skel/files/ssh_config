@@ -1,0 +1,2 @@
+Match host * exec "~/.blessclient/blessclient run"
+    IdentityFile ~/.ssh/blessid
