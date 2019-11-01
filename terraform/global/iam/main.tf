@@ -50,7 +50,7 @@ resource "aws_iam_policy" "bless-policy-kms" {
 
 
 module "role" {
-  source = "git@github.com:WynkLimited/platform.git//modules//iam-role"
+  source = "git@github.com:kshitijcode/platform.git//modules//iam-role"
 
   role-name = "bless-lambda-${var.region}"
   description = "IAM role with permissions to perform actions on CloudWatch & KMS resources for Bless"
